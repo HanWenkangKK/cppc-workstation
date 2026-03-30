@@ -43,3 +43,7 @@ build/
 /.m2-local/
 /cppc-gateway/target/
 /cppc-patient/target/
+/cppc-deploy/minio/
+/cppc-deploy/nacos/
+/cppc-deploy/postgres/
+/cppc-deploy/postgres/
