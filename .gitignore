@@ -36,4 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### 其他 ###
 /.idea/
+/cppc-ai-agent/target/
+/.m2-local/
+/cppc-gateway/target/
+/cppc-patient/target/
