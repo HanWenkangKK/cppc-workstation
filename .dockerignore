@@ -1,0 +1,9 @@
+.git
+.idea
+.m2-local
+**/target
+**/build
+cppc-deploy/minio
+cppc-deploy/nacos
+cppc-deploy/postgres/data
+docs

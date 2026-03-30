@@ -1,12 +1,12 @@
 server:
-  port: 8030
+  port: ${SERVER_PORT:8030}
 spring:
   application:
     name: cppc-ai-agent
   datasource:
-    url: jdbc:postgresql://localhost:5432/cppc_platform
-    username: cppcadmin
-    password: cppcadmin
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cppc_platform}
+    username: ${SPRING_DATASOURCE_USERNAME:cppcadmin}
+    password: ${SPRING_DATASOURCE_PASSWORD:cppcadmin}
     driver-class-name: org.postgresql.Driver
 springdoc:
   api-docs:
