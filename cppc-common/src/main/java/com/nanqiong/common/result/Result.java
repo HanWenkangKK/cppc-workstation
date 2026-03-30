@@ -10,29 +10,29 @@ import lombok.NoArgsConstructor;
 public class Result<T> {
 
     private int code;
-    private String message;
+    private String msg;
     private T data;
 
     public Result(T data) {
-        this.code = 200;
-        this.message = "success";
+        this.code = 0;
+        this.msg = "success";
         this.data = data;
     }
 
     public Result(T data, boolean success, String message) {
         if (success) {
-            this.code = 200;
-            this.message = "success";
+            this.code = 0;
+            this.msg = "success";
         } else {
             this.code = 500;
-            this.message = message;
+            this.msg = message;
         }
         this.data = data;
     }
 
     public Result(int code, String message) {
         this.code = code;
-        this.message = message;
+        this.msg = message;
         this.data = null;
     }
 
