@@ -1,13 +1,12 @@
-target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+
+### Build outputs ###
+**/target/
+**/build/
+dist/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -17,33 +16,26 @@ target/
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
 
 ### VS Code ###
 .vscode/
 
-### Mac OS ###
+### OS files ###
 .DS_Store
 
-### 其他 ###
-/.idea/
-/cppc-ai-agent/target/
-/.m2-local/
-/cppc-gateway/target/
-/cppc-patient/target/
-/cppc-deploy/minio/
-/cppc-deploy/nacos/
-/cppc-deploy/postgres/
-/cppc-deploy/postgres/
+### Local dependencies ###
+.m2-local/
+
+### Local deploy data ###
+cppc-deploy/minio/
+cppc-deploy/nacos/
+cppc-deploy/postgres/

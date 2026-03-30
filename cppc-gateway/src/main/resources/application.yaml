@@ -1,0 +1,48 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: cppc-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            # 业务接口代理：外部只访问网关，网关再转发到具体服务
+            - id: patient-service-route
+              uri: http://localhost:8020
+              predicates:
+                - Path=/patient/**
+              filters:
+                - StripPrefix=1
+            - id: ai-agent-service-route
+              uri: http://localhost:8030
+              predicates:
+                - Path=/ai/**
+              filters:
+                - StripPrefix=1
+            # OpenAPI 文档代理：用于 Swagger 聚合
+            - id: patient-docs-route
+              uri: http://localhost:8020
+              predicates:
+                - Path=/patient/v3/api-docs
+            - id: ai-agent-docs-route
+              uri: http://localhost:8030
+              predicates:
+                - Path=/ai/v3/api-docs
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: cppc-patient
+        url: /patient/v3/api-docs
+      - name: cppc-ai-agent
+        url: /ai/v3/api-docs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

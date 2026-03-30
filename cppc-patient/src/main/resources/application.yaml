@@ -1,0 +1,15 @@
+server:
+  port: 8020
+spring:
+  application:
+    name: cppc-patient
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cppc_platform
+    username: cppcadmin
+    password: cppcadmin
+    driver-class-name: org.postgresql.Driver
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
