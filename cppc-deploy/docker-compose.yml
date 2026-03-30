@@ -1,0 +1,57 @@
+services:
+  # Nacos 注册中心与配置中心
+  nacos:
+    image: nacos/nacos-server:v2.3.2 # 建议使用 2.x 版本支持 gRPC
+    container_name: nacos-standalone
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=${NACOS_MODE}
+      - JVM_XMS=${NACOS_JVM_XMS}
+      - JVM_XMX=${NACOS_JVM_XMX}
+      - JVM_XMN=${NACOS_JVM_XMN}
+    volumes:
+      - ./nacos/logs:/home/nacos/logs
+    ports:
+      - "8848:8848" # HTTP 端口
+      - "9848:9848" # gRPC 客户端上报端口（必须开启）
+      - "9849:9849" # gRPC 服务端同步端口
+    restart: always
+
+  # PostgreSQL：存储业务数据、向量数据及 JSON 评估项
+  cppc-db:
+    image: ankane/pgvector:latest # 使用带向量扩展的镜像，方便后续 AI 开发
+    container_name: cppc-pg
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d # 放置初始化 SQL
+    restart: always
+
+  # Redis：存储登录 Token、临时评估缓存、AI 生成进度状态
+  cppc-redis:
+    image: redis:7.0-alpine
+    container_name: cppc-redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: redis-server --appendonly yes # 开启持久化
+    restart: always
+
+  # MinIO：存储患者上传的医学影像、生成的 PDF 评估报告、带教视频
+  cppc-minio:
+    image: minio/minio
+    container_name: cppc-minio
+    ports:
+      - "${MINIO_API_PORT}:9000" # API 端口
+      - "${MINIO_CONSOLE_PORT}:9001" # 管理后台控制台端口
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./minio/data:/data
+    command: server /data --console-address ":9001"
+    restart: always
