@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackages = "com.nanqiong")
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BusinessException.class)
+    public Result<Object> handleBusinessException(BusinessException ex) {
+        return Result.fail(ex.getCode(), ex.getMessage(), ex.getData());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
         return Result.fail(4001, ex.getMessage());

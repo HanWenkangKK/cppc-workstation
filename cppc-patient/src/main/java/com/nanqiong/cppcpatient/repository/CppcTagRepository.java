@@ -16,7 +16,8 @@ public class CppcTagRepository {
 
     public List<CppcTagEntity> findAll() {
         return jdbcTemplate.query("""
-                SELECT id, parent_id, biz_code, label, level, is_leaf
+                SELECT id, parent_id, biz_code, label, level, is_leaf,
+                       selectable, exclusive_group, disabled_reason, rule_version
                 FROM cppc_tags
                 ORDER BY sort_no ASC, id ASC
                 """, (rs, rowNum) -> new CppcTagEntity(
@@ -25,7 +26,11 @@ public class CppcTagRepository {
                 rs.getString("biz_code"),
                 rs.getString("label"),
                 rs.getInt("level"),
-                rs.getBoolean("is_leaf")
+                rs.getBoolean("is_leaf"),
+                rs.getBoolean("selectable"),
+                rs.getString("exclusive_group"),
+                rs.getString("disabled_reason"),
+                rs.getString("rule_version")
         ));
     }
 
@@ -35,7 +40,11 @@ public class CppcTagRepository {
             String bizCode,
             String label,
             Integer level,
-            Boolean isLeaf
+            Boolean isLeaf,
+            Boolean selectable,
+            String exclusiveGroup,
+            String disabledReason,
+            String ruleVersion
     ) {
     }
 }
