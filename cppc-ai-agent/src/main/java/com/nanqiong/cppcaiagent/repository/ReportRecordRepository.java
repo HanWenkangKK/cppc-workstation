@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Repository
 public class ReportRecordRepository {
@@ -42,14 +43,22 @@ public class ReportRecordRepository {
             return statement;
         }, keyHolder);
 
-        Number key = keyHolder.getKey();
-        Long id = key == null ? null : key.longValue();
+        Long id = extractId(keyHolder);
         LocalDateTime createdAt = jdbcTemplate.queryForObject(
                 "SELECT created_at FROM report_record WHERE id = ?",
                 LocalDateTime.class,
                 id
         );
         return new SavedReportRecord(id, createdAt);
+    }
+
+    private Long extractId(KeyHolder keyHolder) {
+        Map<String, Object> keys = keyHolder.getKeys();
+        Object id = keys == null ? null : keys.get("id");
+        if (id instanceof Number number) {
+            return number.longValue();
+        }
+        throw new IllegalStateException("报告创建后未返回主键 id");
     }
 
     public record CreateReportRecordCommand(

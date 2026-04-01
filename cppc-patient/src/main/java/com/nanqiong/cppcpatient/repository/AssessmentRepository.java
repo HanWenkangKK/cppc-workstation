@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -35,8 +36,7 @@ public class AssessmentRepository {
             return statement;
         }, keyHolder);
 
-        Number key = keyHolder.getKey();
-        Long id = key == null ? null : key.longValue();
+        Long id = extractId(keyHolder);
         return findById(id).orElseThrow(() -> new IllegalStateException("评估记录创建后查询失败"));
     }
 
@@ -68,6 +68,15 @@ public class AssessmentRepository {
         if (updated == 0) {
             throw new IllegalArgumentException("assessment not found");
         }
+    }
+
+    private Long extractId(KeyHolder keyHolder) {
+        Map<String, Object> keys = keyHolder.getKeys();
+        Object id = keys == null ? null : keys.get("id");
+        if (id instanceof Number number) {
+            return number.longValue();
+        }
+        throw new IllegalStateException("评估记录创建后未返回主键 id");
     }
 
     public record AssessmentEntity(
