@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -40,8 +41,7 @@ public class PatientRepository {
             return statement;
         }, keyHolder);
 
-        Number key = keyHolder.getKey();
-        Long id = key == null ? null : key.longValue();
+        Long id = extractId(keyHolder);
         return findById(id).orElseThrow(() -> new IllegalStateException("患者创建后查询失败"));
     }
 
@@ -70,6 +70,15 @@ public class PatientRepository {
                 id
         );
         return count != null && count > 0;
+    }
+
+    private Long extractId(KeyHolder keyHolder) {
+        Map<String, Object> keys = keyHolder.getKeys();
+        Object id = keys == null ? null : keys.get("id");
+        if (id instanceof Number number) {
+            return number.longValue();
+        }
+        throw new IllegalStateException("患者创建后未返回主键 id");
     }
 
     public record PatientEntity(
