@@ -20,6 +20,8 @@ services:
     build:
       context: ..
       dockerfile: cppc-patient/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
     container_name: cppc-patient
     environment:
       SERVER_PORT: 8020
@@ -35,6 +37,8 @@ services:
     build:
       context: ..
       dockerfile: cppc-ai-agent/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
     container_name: cppc-ai-agent
     environment:
       SERVER_PORT: 8030
@@ -50,6 +54,8 @@ services:
     build:
       context: ..
       dockerfile: cppc-gateway/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
     container_name: cppc-gateway
     environment:
       SERVER_PORT: 8888

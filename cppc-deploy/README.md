@@ -42,6 +42,8 @@
 cd /opt/cppc-workstation/cppc-deploy
 cp .env.example .env
 vim .env
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
 docker compose up -d --build
 ```
 
@@ -51,6 +53,8 @@ docker compose up -d --build
 - `001_init.sql` 负责建表
 - `002_seed_cppc_tags.sql` 负责初始化评估标签树
 - Java 服务镜像会在服务器上通过 Maven 构建
+- Docker 构建阶段会使用 `maven/settings.xml` 中配置的国内镜像
+- 建议启用 `DOCKER_BUILDKIT=1`，后续重复构建时可更好利用 Docker 构建缓存
 
 ## 4. 联调地址
 
