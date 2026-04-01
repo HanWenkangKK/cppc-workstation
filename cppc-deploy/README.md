@@ -10,11 +10,11 @@
 - `cppc-patient`
 - `cppc-ai-agent`
 - `cppc-gateway`
-- `nginx`
 
 访问入口：
 
-- 网关统一入口：`http://<server-ip>/`
+- Docker 网关宿主机映射端口：`http://127.0.0.1:${GATEWAY_HOST_PORT}`
+- 对外统一入口：由宿主机现有 Nginx 反向代理到 `cppc-gateway`
 - 患者服务代理前缀：`/patient`
 - AI 服务代理前缀：`/ai`
 - Swagger 聚合地址：`http://<server-ip>/swagger-ui.html`
@@ -31,8 +31,9 @@
 
 1. 安装 Docker Engine
 2. 安装 Docker Compose Plugin
-3. 安全组放通 `80` 端口
-4. 使用 `git clone` 拉取本仓库代码到服务器
+3. 宿主机已有 Nginx，且可配置反向代理
+4. 安全组放通 `80` 端口
+5. 使用 `git clone` 拉取本仓库代码到服务器
 
 ## 3. 启动步骤
 
@@ -55,10 +56,31 @@ docker compose up -d --build
 - Java 服务镜像会在服务器上通过 Maven 构建
 - Docker 构建阶段会使用 `maven/settings.xml` 中配置的国内镜像
 - 建议启用 `DOCKER_BUILDKIT=1`，后续重复构建时可更好利用 Docker 构建缓存
+- `cppc-gateway` 会暴露到宿主机 `GATEWAY_HOST_PORT`，供宿主机 Nginx 反向代理
+
+宿主机 Nginx 反向代理示例：
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:8889;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+如果你修改了 `.env` 里的 `GATEWAY_HOST_PORT`，同步调整 `proxy_pass` 端口即可。
 
 ## 4. 联调地址
 
-前端建议统一通过 Nginx 访问：
+前端建议统一通过宿主机 Nginx 访问：
 
 - 患者接口：`http://<server-ip>/patient/api/v1/...`
 - AI 接口：`http://<server-ip>/ai/api/v1/...`
@@ -94,7 +116,6 @@ docker compose logs -f postgres
 docker compose logs -f cppc-patient
 docker compose logs -f cppc-ai-agent
 docker compose logs -f cppc-gateway
-docker compose logs -f nginx
 ```
 
 重新构建某个服务：
@@ -129,6 +150,7 @@ docker compose up -d cppc-patient
 - 当前 `cppc-ai-agent` 仍使用 mock `RemoteAiService`
 - Coze 真实 HTTP 接口尚未接入
 - 因此 `reports/generate` 当前返回的是结构化 mock 报告
+- 当前对外入口依赖宿主机现有 Nginx，而不是 Docker 内部 Nginx
 
 ## 8. 后续建议
 
@@ -137,4 +159,4 @@ docker compose up -d cppc-patient
 1. HTTPS 与域名
 2. 自动化发布脚本
 3. Coze 真实接入配置
-4. 前端静态资源接入 Nginx
+4. 前端静态资源接入宿主机 Nginx
