@@ -1,12 +1,10 @@
 package com.nanqiong.common.result;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Result<T> {
 
     private int code;
@@ -36,6 +34,12 @@ public class Result<T> {
         this.data = null;
     }
 
+    public Result(int code, String message, T data) {
+        this.code = code;
+        this.msg = message;
+        this.data = data;
+    }
+
     public static <T> Result<T> success(T data) {
         return new Result<>(data);
     }
@@ -46,6 +50,10 @@ public class Result<T> {
 
     public static <T> Result<T> fail(int code, String message) {
         return new Result<>(code, message);
+    }
+
+    public static <T> Result<T> fail(int code, String message, T data) {
+        return new Result<>(code, message, data);
     }
 }
 

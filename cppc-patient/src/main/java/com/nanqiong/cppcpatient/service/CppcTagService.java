@@ -12,25 +12,30 @@ import java.util.Map;
 @Service
 public class CppcTagService {
 
-    private final CppcTagRepository cppcTagRepository;
+    private final AssessmentTagRuleService assessmentTagRuleService;
 
-    public CppcTagService(CppcTagRepository cppcTagRepository) {
-        this.cppcTagRepository = cppcTagRepository;
+    public CppcTagService(AssessmentTagRuleService assessmentTagRuleService) {
+        this.assessmentTagRuleService = assessmentTagRuleService;
     }
 
     public List<CppcTagNodeResponse> getTree() {
-        List<CppcTagRepository.CppcTagEntity> tags = cppcTagRepository.findAll();
+        List<CppcTagRepository.CppcTagEntity> tags = assessmentTagRuleService.getAllTags();
         Map<Long, CppcTagNodeResponse> nodeMap = new LinkedHashMap<>();
         List<CppcTagNodeResponse> roots = new ArrayList<>();
 
         for (CppcTagRepository.CppcTagEntity tag : tags) {
+            AssessmentTagRuleService.TagRule rule = assessmentTagRuleService.resolveRule(tag);
             nodeMap.put(tag.id(), new CppcTagNodeResponse(
-                    tag.id(),
-                    tag.parentId(),
-                    tag.bizCode(),
-                    tag.label(),
-                    tag.level(),
-                    tag.isLeaf()
+                    rule.id(),
+                    rule.parentId(),
+                    rule.bizCode(),
+                    rule.label(),
+                    rule.level(),
+                    rule.isLeaf(),
+                    rule.selectable(),
+                    rule.exclusiveGroup(),
+                    rule.disabledReason(),
+                    rule.ruleVersion()
             ));
         }
 

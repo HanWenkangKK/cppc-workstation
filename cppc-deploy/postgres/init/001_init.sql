@@ -71,11 +71,20 @@ CREATE TABLE IF NOT EXISTS cppc_tags (
     level INTEGER NOT NULL,
     sort_no INTEGER NOT NULL DEFAULT 0,
     is_leaf BOOLEAN NOT NULL DEFAULT FALSE,
+    selectable BOOLEAN NOT NULL DEFAULT FALSE,
+    exclusive_group VARCHAR(64),
+    disabled_reason VARCHAR(255),
+    rule_version VARCHAR(64),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uk_cppc_tags_biz_code UNIQUE (biz_code),
     CONSTRAINT chk_cppc_tags_level CHECK (level > 0)
 );
+
+ALTER TABLE cppc_tags ADD COLUMN IF NOT EXISTS selectable BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE cppc_tags ADD COLUMN IF NOT EXISTS exclusive_group VARCHAR(64);
+ALTER TABLE cppc_tags ADD COLUMN IF NOT EXISTS disabled_reason VARCHAR(255);
+ALTER TABLE cppc_tags ADD COLUMN IF NOT EXISTS rule_version VARCHAR(64);
 
 CREATE INDEX IF NOT EXISTS idx_cppc_tags_parent_id
     ON cppc_tags (parent_id);
@@ -88,6 +97,10 @@ COMMENT ON COLUMN cppc_tags.label IS 'Tag label';
 COMMENT ON COLUMN cppc_tags.level IS 'Tree level';
 COMMENT ON COLUMN cppc_tags.sort_no IS 'Sort number';
 COMMENT ON COLUMN cppc_tags.is_leaf IS 'Leaf node flag';
+COMMENT ON COLUMN cppc_tags.selectable IS 'Whether current node can be selected';
+COMMENT ON COLUMN cppc_tags.exclusive_group IS 'Exclusive group code';
+COMMENT ON COLUMN cppc_tags.disabled_reason IS 'Disabled reason';
+COMMENT ON COLUMN cppc_tags.rule_version IS 'Rule version';
 COMMENT ON COLUMN cppc_tags.created_at IS 'Created time';
 COMMENT ON COLUMN cppc_tags.updated_at IS 'Updated time';
 

@@ -162,6 +162,12 @@ Response：
 
 `GET /api/v1/cppc-tags/tree`
 
+说明：
+
+- 当前基础契约仍以本文为准
+- 当前已支持“仅末级评估项可选”“评估项互斥”等规则扩展
+- 规则字段与校验约定详见同目录下的 [ASSESSMENT_RULE_EXTENSION_PROTOCOL.md](./ASSESSMENT_RULE_EXTENSION_PROTOCOL.md)
+
 Response：
 
 ```json

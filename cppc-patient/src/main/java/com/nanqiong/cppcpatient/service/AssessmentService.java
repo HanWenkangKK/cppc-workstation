@@ -22,15 +22,18 @@ public class AssessmentService {
 
     private final AssessmentRepository assessmentRepository;
     private final PatientRepository patientRepository;
+    private final AssessmentTagRuleService assessmentTagRuleService;
     private final ObjectMapper objectMapper;
 
     public AssessmentService(
             AssessmentRepository assessmentRepository,
             PatientRepository patientRepository,
+            AssessmentTagRuleService assessmentTagRuleService,
             ObjectMapper objectMapper
     ) {
         this.assessmentRepository = assessmentRepository;
         this.patientRepository = patientRepository;
+        this.assessmentTagRuleService = assessmentTagRuleService;
         this.objectMapper = objectMapper;
     }
 
@@ -71,11 +74,17 @@ public class AssessmentService {
             throw new IllegalArgumentException("tagIds 不能为空");
         }
 
-        assessmentRepository.updateTagIds(assessmentId, toJson(request.tagIds()));
+        assessmentTagRuleService.validateSelectedTagIds(request.tagIds());
+        List<Long> normalizedTagIds = request.tagIds().stream()
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .toList();
+
+        assessmentRepository.updateTagIds(assessmentId, toJson(normalizedTagIds));
         return new SubmitAssessmentTagsResponse(
                 assessmentId,
-                request.tagIds(),
-                request.tagIds().size(),
+                normalizedTagIds,
+                normalizedTagIds.size(),
                 "draft"
         );
     }
