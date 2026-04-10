@@ -48,6 +48,22 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 docker compose up -d --build
 ```
 
+本地开发如果只需要数据库，不要直接拉整套服务，执行：
+
+```bash
+docker compose up -d postgres
+```
+
+默认会把数据库映射到宿主机 `POSTGRES_HOST_PORT`，因此本机可直接连接：
+
+```text
+host=127.0.0.1
+port=${POSTGRES_HOST_PORT}
+database=${POSTGRES_DB}
+username=${POSTGRES_USER}
+password=${POSTGRES_PASSWORD}
+```
+
 首次启动说明：
 
 - `postgres` 会自动执行 `postgres/init/` 下的 SQL
